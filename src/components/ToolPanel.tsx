@@ -186,6 +186,16 @@ export default function ToolPanel({
     update('crop', { ...options.crop, ...patch });
   };
 
+  // Determine if any operation is actually configured
+  const hasOperations =
+    options.format !== 'original' ||
+    options.quality !== 85 ||
+    options.resize.enabled ||
+    options.crop.enabled ||
+    options.rotation !== 0 ||
+    options.flipH ||
+    options.flipV;
+
   return (
     <motion.div
       initial={{ x: 30, opacity: 0 }}
@@ -464,8 +474,8 @@ export default function ToolPanel({
 
       {/* Estimated size + Action buttons */}
       <div className="space-y-2 border-t border-white/[0.06] p-4">
-        {/* Output estimate */}
-        {selectedImage && (
+        {/* Output estimate — only show when operations are configured */}
+        {selectedImage && hasOperations && (
           <div className="mb-1 rounded-lg bg-white/[0.03] px-3 py-2">
             <div className="flex items-center justify-between">
               <span className="text-[11px] text-stone-500">Original</span>
@@ -511,9 +521,14 @@ export default function ToolPanel({
             </div>
           </div>
         )}
+        {!hasOperations && selectedImage && (
+          <p className="py-1 text-center text-[11px] text-stone-600">
+            Select an operation above to get started
+          </p>
+        )}
         <button
           onClick={onProcess}
-          disabled={processing || (selectedCount === 0 && !selectedImage)}
+          disabled={processing || !hasOperations || (selectedCount === 0 && !selectedImage)}
           className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 px-4 py-3 text-sm font-bold text-white shadow-lg shadow-orange-500/20 transition-all hover:shadow-orange-500/30 disabled:opacity-40 disabled:shadow-none"
         >
           {processing ? (
