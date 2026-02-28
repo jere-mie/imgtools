@@ -10,7 +10,7 @@ import { useState, useRef, useCallback, useEffect } from 'react';
 
 type HandlePos =
   | 'nw' | 'n' | 'ne'
-  | 'w'  |       'e'
+  | 'w' | 'e'
   | 'sw' | 's' | 'se';
 
 interface CropOverlayProps {
@@ -117,12 +117,12 @@ function CropOverlay({
 
   const handles: { pos: HandlePos; cursor: string; x: number; y: number }[] = [
     { pos: 'nw', cursor: 'nwse-resize', x: screenRect.x, y: screenRect.y },
-    { pos: 'n',  cursor: 'ns-resize',   x: screenRect.x + screenRect.w / 2, y: screenRect.y },
+    { pos: 'n', cursor: 'ns-resize', x: screenRect.x + screenRect.w / 2, y: screenRect.y },
     { pos: 'ne', cursor: 'nesw-resize', x: screenRect.x + screenRect.w, y: screenRect.y },
-    { pos: 'w',  cursor: 'ew-resize',   x: screenRect.x, y: screenRect.y + screenRect.h / 2 },
-    { pos: 'e',  cursor: 'ew-resize',   x: screenRect.x + screenRect.w, y: screenRect.y + screenRect.h / 2 },
+    { pos: 'w', cursor: 'ew-resize', x: screenRect.x, y: screenRect.y + screenRect.h / 2 },
+    { pos: 'e', cursor: 'ew-resize', x: screenRect.x + screenRect.w, y: screenRect.y + screenRect.h / 2 },
     { pos: 'sw', cursor: 'nesw-resize', x: screenRect.x, y: screenRect.y + screenRect.h },
-    { pos: 's',  cursor: 'ns-resize',   x: screenRect.x + screenRect.w / 2, y: screenRect.y + screenRect.h },
+    { pos: 's', cursor: 'ns-resize', x: screenRect.x + screenRect.w / 2, y: screenRect.y + screenRect.h },
     { pos: 'se', cursor: 'nwse-resize', x: screenRect.x + screenRect.w, y: screenRect.y + screenRect.h },
   ];
 
@@ -291,21 +291,21 @@ export default function ImagePreview({ image, options, onCropChange }: ImagePrev
   return (
     <div className="flex h-full flex-col">
       {/* Info bar */}
-      <div className="flex items-center justify-between border-b border-white/[0.06] px-5 py-2.5">
-        <div className="flex items-center gap-3">
-          <span className="truncate text-sm font-medium text-stone-300">
+      <div className="flex flex-col gap-0.5 border-b border-white/[0.06] px-4 py-2 sm:flex-row sm:items-center sm:justify-between sm:px-5 sm:py-2.5">
+        <div className="flex min-w-0 items-center gap-2">
+          <span className="truncate text-xs font-medium text-stone-300 sm:text-sm">
             {image.name}
           </span>
-          <span className="rounded-md bg-white/[0.05] px-2 py-0.5 font-mono text-[10px] text-stone-500">
+          <span className="shrink-0 rounded-md bg-white/[0.05] px-2 py-0.5 font-mono text-[10px] text-stone-500">
             {image.width}×{image.height}
           </span>
-          <span className="font-mono text-[10px] text-stone-600">
+          <span className="hidden font-mono text-[10px] text-stone-600 sm:inline">
             {formatBytes(image.size)}
           </span>
         </div>
         <div className="flex items-center gap-3 text-[11px] text-stone-500">
-          <span className="font-mono">
-            Output: {displayW}×{displayH}
+          <span className="font-mono text-[10px]">
+            Out: {displayW}×{displayH} · {formatBytes(image.size)}
           </span>
         </div>
       </div>
@@ -376,10 +376,10 @@ export default function ImagePreview({ image, options, onCropChange }: ImagePrev
         </motion.div>
 
         {/* Zoom controls */}
-        <div className="absolute right-4 bottom-4 flex items-center gap-1 rounded-xl bg-black/60 p-1 backdrop-blur-sm">
+        <div className="absolute right-3 bottom-3 flex items-center gap-1 rounded-xl bg-black/70 p-1 backdrop-blur-sm">
           <button
             onClick={() => setZoom((z) => Math.max(0.1, z - 0.25))}
-            className="rounded-lg p-1.5 text-stone-400 transition-colors hover:bg-white/[0.08] hover:text-white"
+            className="rounded-lg p-2 text-stone-400 transition-colors hover:bg-white/[0.08] hover:text-white active:bg-white/[0.12]"
           >
             <ZoomOut className="h-4 w-4" />
           </button>
@@ -388,13 +388,13 @@ export default function ImagePreview({ image, options, onCropChange }: ImagePrev
           </span>
           <button
             onClick={() => setZoom((z) => Math.min(5, z + 0.25))}
-            className="rounded-lg p-1.5 text-stone-400 transition-colors hover:bg-white/[0.08] hover:text-white"
+            className="rounded-lg p-2 text-stone-400 transition-colors hover:bg-white/[0.08] hover:text-white active:bg-white/[0.12]"
           >
             <ZoomIn className="h-4 w-4" />
           </button>
           <button
             onClick={() => setZoom(1)}
-            className="rounded-lg p-1.5 text-stone-400 transition-colors hover:bg-white/[0.08] hover:text-white"
+            className="rounded-lg p-2 text-stone-400 transition-colors hover:bg-white/[0.08] hover:text-white active:bg-white/[0.12]"
             title="Fit to view"
           >
             <Maximize className="h-3.5 w-3.5" />

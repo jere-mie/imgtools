@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import JSZip from 'jszip';
+import { Images, SlidersHorizontal, Eye } from 'lucide-react';
 
 import Header from './components/Header';
 import DropZone from './components/DropZone';
@@ -16,11 +17,14 @@ import {
 import type { ImageFile, ProcessingOptions } from './types';
 import { DEFAULT_OPTIONS } from './types';
 
+type MobileTab = 'images' | 'preview' | 'tools';
+
 export default function App() {
   const [images, setImages] = useState<ImageFile[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [options, setOptions] = useState<ProcessingOptions>({ ...DEFAULT_OPTIONS });
   const [processing, setProcessing] = useState(false);
+  const [mobileTab, setMobileTab] = useState<MobileTab>('images');
 
   const activeImage = images.find((i) => i.id === activeId) ?? null;
   const selectedImages = images.filter((i) => i.selected);
@@ -70,6 +74,8 @@ export default function App() {
             },
           }));
         }
+        // On mobile, switch to preview after adding images
+        setMobileTab('preview');
       }
     },
     [activeId],
@@ -86,6 +92,8 @@ export default function App() {
           crop: { ...o.crop, x: 0, y: 0, width: img.width, height: img.height },
         }));
       }
+      // On mobile, switch to preview after selecting
+      setMobileTab('preview');
     },
     [images],
   );
@@ -184,8 +192,14 @@ export default function App() {
   // ---- View ----
   const hasImages = images.length > 0;
 
+  const mobileTabConfig: { id: MobileTab; icon: React.ElementType; label: string; badge?: number }[] = [
+    { id: 'images', icon: Images, label: 'Images', badge: images.length > 0 ? images.length : undefined },
+    { id: 'preview', icon: Eye, label: 'Preview' },
+    { id: 'tools', icon: SlidersHorizontal, label: 'Tools' },
+  ];
+
   return (
-    <div className="flex h-screen flex-col bg-[#08080A] text-stone-200">
+    <div className="flex h-svh flex-col bg-[#08080A] text-stone-200">
       <Header imageCount={images.length} />
 
       <main className="flex flex-1 overflow-hidden pt-14">
@@ -202,16 +216,16 @@ export default function App() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1, duration: 0.6 }}
-                className="pt-12 text-center sm:pt-16"
+                className="pt-8 text-center sm:pt-16"
               >
-                <h1 className="font-display text-4xl font-extrabold tracking-tight text-stone-100 sm:text-5xl lg:text-6xl">
+                <h1 className="font-display text-3xl font-extrabold tracking-tight text-stone-100 sm:text-5xl lg:text-6xl">
                   Image manipulation,
                   <br />
                   <span className="bg-gradient-to-r from-orange-400 via-amber-400 to-orange-500 bg-clip-text text-transparent">
                     right in your browser.
                   </span>
                 </h1>
-                <p className="mx-auto mt-4 max-w-lg text-sm leading-relaxed text-stone-500 sm:text-base">
+                <p className="mx-auto mt-4 max-w-lg px-6 text-sm leading-relaxed text-stone-500 sm:text-base">
                   Convert, compress, resize, crop, rotate - process single images or
                   entire batches. No uploads, no servers, 100% private.
                 </p>
@@ -223,7 +237,7 @@ export default function App() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.8 }}
-                className="flex flex-wrap items-center justify-center gap-6 pb-8 text-[11px] text-stone-600"
+                className="flex flex-wrap items-center justify-center gap-4 pb-8 text-[11px] text-stone-600"
               >
                 {[
                   'Format conversion',
@@ -248,7 +262,8 @@ export default function App() {
               exit={{ opacity: 0 }}
               className="flex flex-1 overflow-hidden"
             >
-              <div className="w-64 shrink-0 border-r border-white/[0.06] bg-[#0A0A0C] xl:w-72">
+              {/* ── Desktop: 3-column layout ── */}
+              <div className="hidden md:flex md:w-64 md:shrink-0 md:flex-col md:border-r md:border-white/[0.06] md:bg-[#0A0A0C] xl:w-72">
                 <ImageSidebar
                   images={images}
                   selectedId={activeId}
@@ -263,7 +278,7 @@ export default function App() {
                 </div>
               </div>
 
-              <div className="flex flex-1 flex-col overflow-hidden">
+              <div className="hidden md:flex md:flex-1 md:flex-col md:overflow-hidden">
                 {activeImage ? (
                   <ImagePreview
                     image={activeImage}
@@ -277,7 +292,7 @@ export default function App() {
                 )}
               </div>
 
-              <div className="w-72 shrink-0 border-l border-white/[0.06] bg-[#0A0A0C] xl:w-80">
+              <div className="hidden md:flex md:w-72 md:shrink-0 md:border-l md:border-white/[0.06] md:bg-[#0A0A0C] xl:w-80">
                 <ToolPanel
                   options={options}
                   setOptions={setOptions}
@@ -287,6 +302,115 @@ export default function App() {
                   onDownloadAll={handleDownloadZip}
                   processing={processing}
                 />
+              </div>
+
+              {/* ── Mobile: tab-based single-panel layout ── */}
+              <div className="flex flex-1 flex-col overflow-hidden md:hidden">
+                {/* Panel content */}
+                <div className="flex-1 overflow-hidden">
+                  <AnimatePresence mode="wait">
+                    {mobileTab === 'images' && (
+                      <motion.div
+                        key="m-images"
+                        initial={{ opacity: 0, x: -16 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -16 }}
+                        transition={{ duration: 0.18 }}
+                        className="flex h-full flex-col bg-[#0A0A0C]"
+                      >
+                        <ImageSidebar
+                          images={images}
+                          selectedId={activeId}
+                          onSelect={handleSelect}
+                          onRemove={handleRemove}
+                          onSelectAll={handleSelectAll}
+                          onDeselectAll={handleDeselectAll}
+                          onToggleSelect={handleToggleSelect}
+                        />
+                        <div className="border-t border-white/[0.06] p-3">
+                          <DropZone onFiles={handleFiles} compact />
+                        </div>
+                      </motion.div>
+                    )}
+
+                    {mobileTab === 'preview' && (
+                      <motion.div
+                        key="m-preview"
+                        initial={{ opacity: 0, x: 16 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: 16 }}
+                        transition={{ duration: 0.18 }}
+                        className="h-full"
+                      >
+                        {activeImage ? (
+                          <ImagePreview
+                            image={activeImage}
+                            options={options}
+                            onCropChange={handleCropChange}
+                          />
+                        ) : (
+                          <div className="flex h-full flex-col items-center justify-center gap-3 text-stone-600">
+                            <Eye className="h-8 w-8 opacity-30" />
+                            <span className="text-sm">Select an image to preview</span>
+                          </div>
+                        )}
+                      </motion.div>
+                    )}
+
+                    {mobileTab === 'tools' && (
+                      <motion.div
+                        key="m-tools"
+                        initial={{ opacity: 0, x: 16 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: 16 }}
+                        transition={{ duration: 0.18 }}
+                        className="h-full bg-[#0A0A0C]"
+                      >
+                        <ToolPanel
+                          options={options}
+                          setOptions={setOptions}
+                          selectedImage={activeImage}
+                          selectedCount={selectedCount}
+                          onProcess={handleProcess}
+                          onDownloadAll={handleDownloadZip}
+                          processing={processing}
+                        />
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+
+                {/* Mobile bottom tab bar */}
+                <nav className="flex shrink-0 border-t border-white/[0.06] bg-[#08080A]">
+                  {mobileTabConfig.map(({ id, icon: Icon, label, badge }) => (
+                    <button
+                      key={id}
+                      onClick={() => setMobileTab(id)}
+                      className={`relative flex flex-1 flex-col items-center justify-center gap-1 py-3 text-[10px] font-semibold tracking-wide uppercase transition-colors ${mobileTab === id
+                          ? 'text-orange-400'
+                          : 'text-stone-600 active:text-stone-400'
+                        }`}
+                    >
+                      {/* Active indicator */}
+                      {mobileTab === id && (
+                        <motion.div
+                          layoutId="mobile-tab-indicator"
+                          className="absolute top-0 left-0 right-0 h-0.5 bg-orange-500"
+                          transition={{ type: 'spring', stiffness: 500, damping: 35 }}
+                        />
+                      )}
+                      <div className="relative">
+                        <Icon className="h-5 w-5" strokeWidth={mobileTab === id ? 2.5 : 1.8} />
+                        {badge !== undefined && (
+                          <span className="absolute -top-1.5 -right-2 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-orange-500 text-[8px] font-bold text-white">
+                            {badge > 9 ? '9+' : badge}
+                          </span>
+                        )}
+                      </div>
+                      {label}
+                    </button>
+                  ))}
+                </nav>
               </div>
             </motion.div>
           )}

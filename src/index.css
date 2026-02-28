@@ -25,7 +25,7 @@ body {
   padding: 0;
   background: #08080A;
   color: #FAFAF9;
-  overflow: hidden;
+  overflow-x: hidden;
 }
 
 .font-display {
@@ -41,16 +41,20 @@ body {
   scrollbar-width: thin;
   scrollbar-color: rgba(255, 255, 255, 0.06) transparent;
 }
+
 .scrollbar-thin::-webkit-scrollbar {
   width: 4px;
 }
+
 .scrollbar-thin::-webkit-scrollbar-track {
   background: transparent;
 }
+
 .scrollbar-thin::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.08);
   border-radius: 4px;
 }
+
 .scrollbar-thin::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.14);
 }
@@ -60,9 +64,11 @@ body {
   padding: 12px 0;
   border-bottom: 1px solid rgba(255, 255, 255, 0.04);
 }
+
 .tool-section:first-child {
   padding-top: 0;
 }
+
 .tool-section:last-child {
   border-bottom: none;
 }
@@ -76,7 +82,9 @@ body {
   background: rgba(255, 255, 255, 0.08);
   outline: none;
   cursor: pointer;
+  touch-action: pan-y;
 }
+
 .slider-input::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
@@ -89,10 +97,12 @@ body {
   cursor: pointer;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
+
 .slider-input::-webkit-slider-thumb:hover {
   transform: scale(1.2);
   box-shadow: 0 0 12px rgba(249, 115, 22, 0.5);
 }
+
 .slider-input::-moz-range-thumb {
   width: 14px;
   height: 14px;
@@ -108,17 +118,19 @@ body {
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 8px;
-  padding: 6px 10px;
-  font-size: 12px;
+  padding: 8px 10px;
+  font-size: 13px;
   font-family: 'Fira Code', monospace;
   color: #E7E5E4;
   outline: none;
   transition: border-color 0.15s ease, background 0.15s ease;
 }
+
 .input-field:focus {
   border-color: rgba(249, 115, 22, 0.4);
   background: rgba(255, 255, 255, 0.05);
 }
+
 .input-field::-webkit-inner-spin-button,
 .input-field::-webkit-outer-spin-button {
   opacity: 0.3;
@@ -128,31 +140,34 @@ body {
 .toggle-checkbox {
   -webkit-appearance: none;
   appearance: none;
-  width: 32px;
-  height: 18px;
+  width: 36px;
+  height: 20px;
   background: rgba(255, 255, 255, 0.08);
-  border-radius: 9px;
+  border-radius: 10px;
   position: relative;
   cursor: pointer;
   transition: background 0.2s ease;
   flex-shrink: 0;
 }
+
 .toggle-checkbox::after {
   content: '';
   position: absolute;
-  top: 2px;
-  left: 2px;
+  top: 3px;
+  left: 3px;
   width: 14px;
   height: 14px;
   border-radius: 50%;
   background: #78716C;
   transition: transform 0.2s ease, background 0.2s ease;
 }
+
 .toggle-checkbox:checked {
   background: rgba(249, 115, 22, 0.3);
 }
+
 .toggle-checkbox:checked::after {
-  transform: translateX(14px);
+  transform: translateX(16px);
   background: #F97316;
 }
 

@@ -61,11 +61,10 @@ export default function ImageSidebar({
               exit={{ opacity: 0, x: -20, scale: 0.9 }}
               transition={{ delay: index * 0.03, duration: 0.25 }}
               onClick={() => onSelect(img.id)}
-              className={`group relative flex cursor-pointer items-center gap-3 rounded-xl p-2 transition-all duration-150 ${
-                selectedId === img.id
+              className={`group relative flex cursor-pointer items-center gap-3 rounded-xl p-2 transition-all duration-150 ${selectedId === img.id
                   ? 'bg-white/[0.08] ring-1 ring-orange-500/30'
                   : 'hover:bg-white/[0.04]'
-              }`}
+                }`}
             >
               {/* Selection checkbox */}
               <button
@@ -73,11 +72,10 @@ export default function ImageSidebar({
                   e.stopPropagation();
                   onToggleSelect(img.id);
                 }}
-                className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-md border transition-all ${
-                  img.selected
+                className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-md border transition-all ${img.selected
                     ? 'border-orange-500 bg-orange-500 text-white'
                     : 'border-white/[0.12] bg-white/[0.03] group-hover:border-white/[0.2]'
-                }`}
+                  }`}
               >
                 {img.selected && <Check className="h-3 w-3" strokeWidth={3} />}
               </button>
@@ -109,7 +107,7 @@ export default function ImageSidebar({
                   e.stopPropagation();
                   onRemove(img.id);
                 }}
-                className="shrink-0 rounded-md p-1 text-stone-600 opacity-0 transition-all hover:bg-white/[0.06] hover:text-red-400 group-hover:opacity-100"
+                className="shrink-0 rounded-md p-1.5 text-stone-600 opacity-40 transition-all hover:bg-white/[0.06] hover:text-red-400 hover:opacity-100 active:bg-red-500/20 active:text-red-400 active:opacity-100 md:opacity-0 md:group-hover:opacity-100"
               >
                 <X className="h-3.5 w-3.5" />
               </button>

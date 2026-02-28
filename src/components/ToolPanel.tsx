@@ -227,11 +227,10 @@ export default function ToolPanel({
               <button
                 key={fmt}
                 onClick={() => update('format', fmt)}
-                className={`rounded-lg px-2 py-2 text-center font-mono text-[11px] font-medium transition-all ${
-                  options.format === fmt
+                className={`rounded-lg px-2 py-2.5 text-center font-mono text-[11px] font-medium transition-all ${options.format === fmt
                     ? 'bg-orange-500/20 text-orange-300 ring-1 ring-orange-500/40'
-                    : 'bg-white/[0.03] text-stone-500 hover:bg-white/[0.06] hover:text-stone-400'
-                }`}
+                    : 'bg-white/[0.03] text-stone-500 hover:bg-white/[0.06] hover:text-stone-400 active:bg-white/[0.08]'
+                  }`}
               >
                 {fmt === 'original' ? 'Orig' : fmt.toUpperCase()}
               </button>
@@ -376,7 +375,7 @@ export default function ToolPanel({
               {/* Ratio presets */}
               <div className="flex flex-wrap gap-1.5">
                 {[
-                  { label: 'Free', fn: () => {} },
+                  { label: 'Free', fn: () => { } },
                   {
                     label: '1:1',
                     fn: () => {
@@ -432,11 +431,10 @@ export default function ToolPanel({
               <button
                 key={deg}
                 onClick={() => update('rotation', deg)}
-                className={`rounded-lg py-2 text-center font-mono text-[11px] font-medium transition-all ${
-                  options.rotation === deg
+                className={`rounded-lg py-2.5 text-center font-mono text-[11px] font-medium transition-all ${options.rotation === deg
                     ? 'bg-orange-500/20 text-orange-300 ring-1 ring-orange-500/40'
-                    : 'bg-white/[0.03] text-stone-500 hover:bg-white/[0.06] hover:text-stone-400'
-                }`}
+                    : 'bg-white/[0.03] text-stone-500 hover:bg-white/[0.06] hover:text-stone-400 active:bg-white/[0.08]'
+                  }`}
               >
                 {deg}°
               </button>
@@ -450,21 +448,19 @@ export default function ToolPanel({
           <div className="grid grid-cols-2 gap-2">
             <button
               onClick={() => update('flipH', !options.flipH)}
-              className={`flex items-center justify-center gap-2 rounded-lg py-2.5 text-xs font-medium transition-all ${
-                options.flipH
+              className={`flex items-center justify-center gap-2 rounded-lg py-3 text-xs font-medium transition-all ${options.flipH
                   ? 'bg-orange-500/20 text-orange-300 ring-1 ring-orange-500/40'
                   : 'bg-white/[0.03] text-stone-500 hover:bg-white/[0.06] hover:text-stone-400'
-              }`}
+                }`}
             >
               <FlipHorizontal className="h-3.5 w-3.5" /> Horizontal
             </button>
             <button
               onClick={() => update('flipV', !options.flipV)}
-              className={`flex items-center justify-center gap-2 rounded-lg py-2.5 text-xs font-medium transition-all ${
-                options.flipV
+              className={`flex items-center justify-center gap-2 rounded-lg py-3 text-xs font-medium transition-all ${options.flipV
                   ? 'bg-orange-500/20 text-orange-300 ring-1 ring-orange-500/40'
                   : 'bg-white/[0.03] text-stone-500 hover:bg-white/[0.06] hover:text-stone-400'
-              }`}
+                }`}
             >
               <FlipVertical className="h-3.5 w-3.5" /> Vertical
             </button>
