@@ -1,73 +1,42 @@
-# React + TypeScript + Vite
+# imgtools
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A free, browser-based image manipulation toolkit. Convert, compress, resize, crop, rotate, and batch-process images instantly — no uploads, no servers, 100% private.
 
-Currently, two official plugins are available:
+**[Live Demo →](https://jere-mie.github.io/imgtools)**
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Features
 
-## React Compiler
+- **Format conversion** — JPEG, PNG, WebP (with more input formats: GIF, SVG, AVIF, BMP, TIFF)
+- **Quality / compression** — adjustable slider with smart per-format mapping
+- **Resize** — custom dimensions with aspect ratio lock + quick presets (HD, FHD, 4K, 512, 256, etc.)
+- **Crop** — interactive drag-to-crop overlay with corner/edge handles and rule-of-thirds grid
+- **Rotate & flip** — 0°/90°/180°/270° rotation, horizontal/vertical flip
+- **Batch processing** — load multiple images, select which to process, download individually or as a ZIP
+- **Live output estimate** — see the estimated file size before downloading
+- **100% client-side** — all processing happens in your browser via the Canvas API. Nothing is uploaded anywhere.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Tech Stack
 
-## Expanding the ESLint configuration
+- [React](https://react.dev) + [TypeScript](https://www.typescriptlang.org/)
+- [Vite](https://vite.dev)
+- [Tailwind CSS v4](https://tailwindcss.com)
+- [Motion](https://motion.dev) (animations)
+- [Lucide React](https://lucide.dev) (icons)
+- [JSZip](https://stuk.github.io/jszip/) (batch ZIP downloads)
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Getting Started
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+```bash
+# Install dependencies
+npm install
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+# Start dev server
+npm run dev
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+# Production build
+npm run build
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## License
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+[MIT](LICENSE)

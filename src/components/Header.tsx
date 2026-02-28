@@ -1,5 +1,5 @@
 import { motion } from 'motion/react';
-import { Wrench, Shield, Zap } from 'lucide-react';
+import { Wrench, Shield, Zap, Github, Scale } from 'lucide-react';
 
 export default function Header({ imageCount }: { imageCount: number }) {
   return (
@@ -39,6 +39,17 @@ export default function Header({ imageCount }: { imageCount: number }) {
             <span className="flex items-center gap-1.5">
               <Zap className="h-3 w-3" /> Client-side
             </span>
+            <span className="flex items-center gap-1.5">
+              <Scale className="h-3 w-3" /> MIT
+            </span>
+            <a
+              href="https://github.com/jere-mie/imgtools"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 text-stone-500 transition-colors hover:text-stone-300"
+            >
+              <Github className="h-3.5 w-3.5" /> GitHub
+            </a>
           </div>
         </div>
       </div>
