@@ -1,3 +1,7 @@
+skills/
+instructions.md
+.env
+
 # Logs
 logs
 *.log
