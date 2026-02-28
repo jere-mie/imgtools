@@ -174,7 +174,7 @@ export default function DropZone({ onFiles, compact = false }: DropZoneProps) {
 
               {/* Hint */}
               <p className="text-xs text-stone-600">
-                Batch processing supported — drop multiple files at once
+                Batch processing supported - drop multiple files at once
               </p>
             </motion.div>
           </AnimatePresence>

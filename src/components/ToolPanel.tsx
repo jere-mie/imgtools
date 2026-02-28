@@ -506,7 +506,7 @@ export default function ToolPanel({
                   </span>
                 </span>
               ) : (
-                <span className="font-mono text-[11px] text-stone-600">—</span>
+                <span className="font-mono text-[11px] text-stone-600">-</span>
               )}
             </div>
           </div>

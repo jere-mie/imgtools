@@ -3,14 +3,14 @@ import type { ProcessingOptions, ImageFile } from '../types';
 /**
  * Maps the user-facing quality slider (1–100) to an effective toBlob quality
  * value. The Canvas API at quality 1.0 produces near-lossless output that is
- * often *larger* than the original — especially for WebP. We cap the effective
+ * often *larger* than the original - especially for WebP. We cap the effective
  * range to values that are visually indistinguishable from the source.
  */
 function effectiveQuality(
   sliderValue: number,
   mimeType: string,
 ): number | undefined {
-  // PNG is always lossless — quality param is ignored by browsers
+  // PNG is always lossless - quality param is ignored by browsers
   if (mimeType === 'image/png') return undefined;
 
   const t = sliderValue / 100; // normalise to 0–1
@@ -150,7 +150,7 @@ export async function processImage(
 
   ctx.restore();
 
-  // Export with quality — use effective mapping to avoid bloated output
+  // Export with quality - use effective mapping to avoid bloated output
   const quality = effectiveQuality(options.quality, mimeType);
 
   const blob = await new Promise<Blob>((resolve, reject) => {

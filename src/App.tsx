@@ -212,7 +212,7 @@ export default function App() {
                   </span>
                 </h1>
                 <p className="mx-auto mt-4 max-w-lg text-sm leading-relaxed text-stone-500 sm:text-base">
-                  Convert, compress, resize, crop, rotate — process single images or
+                  Convert, compress, resize, crop, rotate - process single images or
                   entire batches. No uploads, no servers, 100% private.
                 </p>
               </motion.div>

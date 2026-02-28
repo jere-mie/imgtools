@@ -334,7 +334,7 @@ export default function ImagePreview({ image, options, onCropChange }: ImagePrev
           }}
         />
 
-        {/* Image + crop wrapper — positioned absolutely centered */}
+        {/* Image + crop wrapper - positioned absolutely centered */}
         <motion.div
           key={image.id}
           initial={{ opacity: 0, scale: 0.97 }}
