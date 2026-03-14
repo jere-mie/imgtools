@@ -1,7 +1,7 @@
 import type { ProcessingOptions, ImageFile } from '../types';
 
 /**
- * Maps the user-facing quality slider (1–100) to an effective toBlob quality
+ * Maps the user-facing quality slider (1-100) to an effective toBlob quality
  * value. The Canvas API at quality 1.0 produces near-lossless output that is
  * often *larger* than the original - especially for WebP. We cap the effective
  * range to values that are visually indistinguishable from the source.
@@ -13,14 +13,14 @@ function effectiveQuality(
   // PNG is always lossless - quality param is ignored by browsers
   if (mimeType === 'image/png') return undefined;
 
-  const t = sliderValue / 100; // normalise to 0–1
+  const t = sliderValue / 100; // normalise to 0-1
 
   if (mimeType === 'image/webp') {
-    // WebP: map 1–100% → 0.01–0.92  (0.92 is visually lossless)
+    // WebP: map 1-100% → 0.01-0.92  (0.92 is visually lossless)
     return 0.01 + t * 0.91;
   }
 
-  // JPEG (and fallback): map 1–100% → 0.01–0.95
+  // JPEG (and fallback): map 1-100% → 0.01-0.95
   return 0.01 + t * 0.94;
 }
 

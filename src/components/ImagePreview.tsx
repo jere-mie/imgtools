@@ -129,8 +129,10 @@ function CropOverlay({
   return (
     <div
       className="absolute inset-0"
+      style={{ touchAction: 'none' }}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
+      onPointerLeave={handlePointerUp}
     >
       {/* Dark overlay outside crop */}
       <svg className="absolute inset-0 h-full w-full">
@@ -174,6 +176,7 @@ function CropOverlay({
         {/* Move handle (whole area) */}
         <div
           className="absolute inset-0 cursor-move"
+          style={{ touchAction: 'none' }}
           onPointerDown={(e) => handlePointerDown('move', e)}
         />
 
@@ -187,17 +190,18 @@ function CropOverlay({
       {handles.map((h) => (
         <div
           key={h.pos}
-          className="absolute z-10"
+          className="absolute z-10 flex items-center justify-center"
           style={{
-            left: h.x - 5,
-            top: h.y - 5,
-            width: 10,
-            height: 10,
+            left: h.x - 22,
+            top: h.y - 22,
+            width: 44,
+            height: 44,
             cursor: h.cursor,
+            touchAction: 'none',
           }}
           onPointerDown={(e) => handlePointerDown(h.pos, e)}
         >
-          <div className="h-2.5 w-2.5 rounded-sm border-2 border-orange-400 bg-white shadow-sm" />
+          <div className="h-3.5 w-3.5 rounded-sm border-2 border-orange-400 bg-white shadow-md" />
         </div>
       ))}
     </div>
@@ -216,6 +220,9 @@ interface ImagePreviewProps {
 
 export default function ImagePreview({ image, options, onCropChange }: ImagePreviewProps) {
   const [zoom, setZoom] = useState(1);
+  const [pan, setPan] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const panningRef = useRef<{ mx: number; my: number; px: number; py: number } | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerSize, setContainerSize] = useState({ w: 0, h: 0 });
 
@@ -233,9 +240,10 @@ export default function ImagePreview({ image, options, onCropChange }: ImagePrev
     return () => observer.disconnect();
   }, [updateSize]);
 
-  // Reset zoom when image changes
+  // Reset zoom and pan when image changes
   useEffect(() => {
     setZoom(1);
+    setPan({ x: 0, y: 0 });
   }, [image.id]);
 
   // Calculate effective output dimensions for the info bar
@@ -277,6 +285,48 @@ export default function ImagePreview({ image, options, onCropChange }: ImagePrev
   const renderedW = image.width * fitScale * zoom;
   const renderedH = image.height * fitScale * zoom;
 
+  // Pan clamping — keep the image edge reachable but no further
+  const maxPanX = Math.max(0, (renderedW - containerSize.w) / 2);
+  const maxPanY = Math.max(0, (renderedH - containerSize.h) / 2);
+  const clampedPan = {
+    x: Math.max(-maxPanX, Math.min(maxPanX, pan.x)),
+    y: Math.max(-maxPanY, Math.min(maxPanY, pan.y)),
+  };
+
+  const canPan = maxPanX > 0 || maxPanY > 0;
+
+  const handleContainerPointerDown = useCallback(
+    (e: React.PointerEvent) => {
+      if (e.button !== 0) return;
+      if (!canPan) return;
+      e.preventDefault();
+      (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+      panningRef.current = { mx: e.clientX, my: e.clientY, px: pan.x, py: pan.y };
+      setIsDragging(true);
+    },
+    [pan, canPan],
+  );
+
+  const handleContainerPointerMove = useCallback(
+    (e: React.PointerEvent) => {
+      if (!panningRef.current) return;
+      const dx = e.clientX - panningRef.current.mx;
+      const dy = e.clientY - panningRef.current.my;
+      const newX = panningRef.current.px + dx;
+      const newY = panningRef.current.py + dy;
+      setPan({
+        x: Math.max(-maxPanX, Math.min(maxPanX, newX)),
+        y: Math.max(-maxPanY, Math.min(maxPanY, newY)),
+      });
+    },
+    [maxPanX, maxPanY],
+  );
+
+  const handleContainerPointerUp = useCallback(() => {
+    panningRef.current = null;
+    setIsDragging(false);
+  }, []);
+
   const rotation = options.rotation || 0;
   const scaleX = options.flipH ? -1 : 1;
   const scaleY = options.flipV ? -1 : 1;
@@ -314,9 +364,15 @@ export default function ImagePreview({ image, options, onCropChange }: ImagePrev
       <div
         ref={containerRef}
         className="relative flex flex-1 items-center justify-center overflow-hidden bg-[#0C0C0E]"
+        onPointerDown={handleContainerPointerDown}
+        onPointerMove={handleContainerPointerMove}
+        onPointerUp={handleContainerPointerUp}
+        onPointerCancel={handleContainerPointerUp}
         style={{
           backgroundImage:
             'radial-gradient(circle at 50% 50%, rgba(249,115,22,0.02) 0%, transparent 70%)',
+          cursor: isDragging ? 'grabbing' : canPan ? 'grab' : 'default',
+          touchAction: canPan ? 'none' : 'auto',
         }}
       >
         {/* Checkerboard pattern for transparency */}
@@ -334,7 +390,13 @@ export default function ImagePreview({ image, options, onCropChange }: ImagePrev
           }}
         />
 
-        {/* Image + crop wrapper - positioned absolutely centered */}
+        {/* Image + crop wrapper - pan translation applied here */}
+        <div
+          style={{
+            transform: `translate(${clampedPan.x}px, ${clampedPan.y}px)`,
+            flexShrink: 0,
+          }}
+        >
         <motion.div
           key={image.id}
           initial={{ opacity: 0, scale: 0.97 }}
@@ -374,9 +436,13 @@ export default function ImagePreview({ image, options, onCropChange }: ImagePrev
             />
           )}
         </motion.div>
+        </div>
 
         {/* Zoom controls */}
-        <div className="absolute right-3 bottom-3 flex items-center gap-1 rounded-xl bg-black/70 p-1 backdrop-blur-sm">
+        <div
+          className="absolute right-3 bottom-3 flex items-center gap-1 rounded-xl bg-black/70 p-1 backdrop-blur-sm"
+          onPointerDown={(e) => e.stopPropagation()}
+        >
           <button
             onClick={() => setZoom((z) => Math.max(0.1, z - 0.25))}
             className="rounded-lg p-2 text-stone-400 transition-colors hover:bg-white/[0.08] hover:text-white active:bg-white/[0.12]"
@@ -393,7 +459,7 @@ export default function ImagePreview({ image, options, onCropChange }: ImagePrev
             <ZoomIn className="h-4 w-4" />
           </button>
           <button
-            onClick={() => setZoom(1)}
+            onClick={() => { setZoom(1); setPan({ x: 0, y: 0 }); }}
             className="rounded-lg p-2 text-stone-400 transition-colors hover:bg-white/[0.08] hover:text-white active:bg-white/[0.12]"
             title="Fit to view"
           >

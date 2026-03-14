@@ -470,7 +470,7 @@ export default function ToolPanel({
 
       {/* Estimated size + Action buttons */}
       <div className="space-y-2 border-t border-white/[0.06] p-4">
-        {/* Output estimate — only show when operations are configured */}
+        {/* Output estimate - only show when operations are configured */}
         {selectedImage && hasOperations && (
           <div className="mb-1 rounded-lg bg-white/[0.03] px-3 py-2">
             <div className="flex items-center justify-between">
@@ -482,7 +482,7 @@ export default function ToolPanel({
             <div className="mt-1 flex items-center justify-between">
               <span className="text-[11px] text-stone-500">Estimated output</span>
               {estimating ? (
-                <span className="font-mono text-[11px] text-stone-600">calculating…</span>
+                <span className="font-mono text-[11px] text-stone-600">calculating...</span>
               ) : estimatedSize !== null ? (
                 <span className="flex items-center gap-1.5 font-mono text-[11px] font-medium">
                   {estimatedSize < selectedImage.size ? (
@@ -530,7 +530,7 @@ export default function ToolPanel({
           {processing ? (
             <>
               <Loader2 className="h-4 w-4 animate-spin" />
-              Processing…
+              Processing...
             </>
           ) : (
             <>
