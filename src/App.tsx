@@ -416,6 +416,17 @@ export default function App() {
           )}
         </AnimatePresence>
       </main>
+      <footer className="shrink-0 text-center text-[11px] text-stone-500/70 p-2">
+        Made by&nbsp;
+        <a
+          href="https://jeremie.bornais.ca"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-stone-500 hover:text-stone-300"
+        >
+          Jeremie Bornais
+        </a>
+      </footer>
     </div>
   );
 }
