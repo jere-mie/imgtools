@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import JSZip from 'jszip';
 import { Images, SlidersHorizontal, Eye } from 'lucide-react';
@@ -18,6 +18,71 @@ import type { ImageFile, ProcessingOptions } from './types';
 import { DEFAULT_OPTIONS } from './types';
 
 type MobileTab = 'images' | 'preview' | 'tools';
+
+function isEditableTarget(target: EventTarget | null): boolean {
+  if (!(target instanceof HTMLElement)) return false;
+
+  return (
+    target.isContentEditable ||
+    target.tagName === 'INPUT' ||
+    target.tagName === 'TEXTAREA' ||
+    target.tagName === 'SELECT'
+  );
+}
+
+function getExtensionFromMimeType(type: string): string {
+  switch (type) {
+    case 'image/jpeg':
+      return 'jpg';
+    case 'image/png':
+      return 'png';
+    case 'image/gif':
+      return 'gif';
+    case 'image/webp':
+      return 'webp';
+    case 'image/svg+xml':
+      return 'svg';
+    case 'image/bmp':
+      return 'bmp';
+    case 'image/tiff':
+      return 'tiff';
+    case 'image/avif':
+      return 'avif';
+    case 'image/x-icon':
+    case 'image/vnd.microsoft.icon':
+      return 'ico';
+    default:
+      return 'png';
+  }
+}
+
+function normalizeClipboardImage(file: File, index: number): File {
+  const trimmedName = file.name.trim();
+  const baseName = trimmedName.replace(/\.[^.]+$/, '') || `pasted-image-${Date.now()}-${index + 1}`;
+  const hasExtension = /\.[^.]+$/.test(trimmedName);
+
+  if (trimmedName && hasExtension) {
+    return file;
+  }
+
+  const extension = getExtensionFromMimeType(file.type);
+  return new File([file], `${baseName}.${extension}`, {
+    type: file.type,
+    lastModified: file.lastModified,
+  });
+}
+
+function getClipboardImageFiles(event: ClipboardEvent): File[] {
+  const items = Array.from(event.clipboardData?.items ?? []);
+
+  return items
+    .filter((item) => item.kind === 'file' && item.type.startsWith('image/'))
+    .map((item, index) => {
+      const file = item.getAsFile();
+      return file ? normalizeClipboardImage(file, index) : null;
+    })
+    .filter((file): file is File => file !== null);
+}
 
 export default function App() {
   const [images, setImages] = useState<ImageFile[]>([]);
@@ -80,6 +145,25 @@ export default function App() {
     },
     [activeId],
   );
+
+  useEffect(() => {
+    const handlePaste = (event: ClipboardEvent) => {
+      if (isEditableTarget(event.target)) {
+        return;
+      }
+
+      const files = getClipboardImageFiles(event);
+      if (files.length === 0) {
+        return;
+      }
+
+      event.preventDefault();
+      void handleFiles(files);
+    };
+
+    document.addEventListener('paste', handlePaste);
+    return () => document.removeEventListener('paste', handlePaste);
+  }, [handleFiles]);
 
   const handleSelect = useCallback(
     (id: string) => {
@@ -227,7 +311,8 @@ export default function App() {
                 </h1>
                 <p className="mx-auto mt-4 max-w-lg px-6 text-sm leading-relaxed text-stone-500 sm:text-base">
                   Convert, compress, resize, crop, rotate - process single images or
-                  entire batches. No uploads, no servers, 100% private.
+                  entire batches. Drop, browse, or paste images straight from your
+                  clipboard. No uploads, no servers, 100% private.
                 </p>
               </motion.div>
 

@@ -79,7 +79,7 @@ export default function DropZone({ onFiles, compact = false }: DropZoneProps) {
           }`}
         >
           <ImagePlus className="h-4 w-4" />
-          Add images
+          Add or paste images
         </button>
       </>
     );
@@ -152,6 +152,7 @@ export default function DropZone({ onFiles, compact = false }: DropZoneProps) {
                   <span className="inline-flex items-center gap-1 text-orange-400/80">
                     <MousePointerClick className="h-3.5 w-3.5" /> click to browse
                   </span>
+                  <span className="text-stone-600">, or paste from clipboard</span>
                 </p>
               </div>
 
@@ -174,7 +175,7 @@ export default function DropZone({ onFiles, compact = false }: DropZoneProps) {
 
               {/* Hint */}
               <p className="text-xs text-stone-600">
-                Batch processing supported - drop multiple files at once
+                Batch processing supported - drop, browse, or paste multiple images
               </p>
             </motion.div>
           </AnimatePresence>

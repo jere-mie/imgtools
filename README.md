@@ -12,6 +12,7 @@ A free, browser-based image manipulation toolkit. Convert, compress, resize, cro
 - **Crop** - interactive drag-to-crop overlay with corner/edge handles and rule-of-thirds grid
 - **Rotate & flip** - 0°/90°/180°/270° rotation, horizontal/vertical flip
 - **Batch processing** - load multiple images, select which to process, download individually or as a ZIP
+- **Clipboard paste** - paste screenshots or copied images directly into the app
 - **Live output estimate** - see the estimated file size before downloading
 - **100% client-side** - all processing happens in your browser via the Canvas API. Nothing is uploaded anywhere.
 
